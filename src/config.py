@@ -19,5 +19,18 @@ class PostgresConfig(BaseConfig):
         return f"postgresql+asyncpg://{self.user}:{self.password}@{self.host}:{self.port}/{self.db}"
 
 
+class RMQConfig(BaseConfig):
+    model_config = SettingsConfigDict(env_prefix="RMQ_")
+    host: str
+    port: str
+    user: str
+    password: str
+
+    @property
+    def rmq_url(self) -> str:
+        return f"amqp://{self.user}:{self.password}@{self.host}:{self.port}/"
+
+
 class Config(BaseSettings):
     postgres: PostgresConfig = Field(default_factory=PostgresConfig)
+    rmq: RMQConfig = Field(default_factory=RMQConfig)
