@@ -2,7 +2,7 @@ import uuid
 
 from src.api.basket.schemas.basket import CreateBasketSchema, BasketSchema
 from src.api.basket.schemas.product import AddProductSchema, UpdateProductSchema
-from src.core.basket.dto.product_on_basket import UpdateProductDTO, AddProductDTO
+from src.core.basket.dto.product_on_basket import UpdateProductOnBasketDTO, AddProductOnBasketDTO
 from src.core.basket.services.basket import BasketService
 
 
@@ -28,7 +28,7 @@ class BasketServiceAdapter:
             basket_id: uuid.UUID,
             create_product_schema: AddProductSchema,
     ) -> None:
-        added_product = AddProductDTO(**create_product_schema.model_dump())
+        added_product = AddProductOnBasketDTO(**create_product_schema.model_dump())
         await self._service.add_product_on_basket(added_product, basket_id)
 
     async def remove_product_from_basket(
@@ -44,7 +44,7 @@ class BasketServiceAdapter:
             product_id: int,
             update_product_schema: UpdateProductSchema,
     ) -> None:
-        update_product_dto = UpdateProductDTO(
+        update_product_dto = UpdateProductOnBasketDTO(
             product_id=product_id,
             **update_product_schema.model_dump()
         )

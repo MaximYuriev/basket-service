@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload, joinedload
 
-from src.core.basket.dto.product_on_basket import AddProductDTO
+from src.core.basket.dto.product_on_basket import AddProductOnBasketDTO
 from src.core.basket.entities.basket import Basket
 from src.core.basket.entities.product_on_basket import ProductOnBasket
 from src.core.basket.exceptions.basket import BasketNotFoundException, BasketAlreadyExistException
@@ -31,7 +31,7 @@ class BasketRepository(IBasketRepository):
         basket_model = await self._get_basket_model(basket_id=basket_id)
         return basket_model.convert_to_entity()
 
-    async def save_product_on_basket(self, product: AddProductDTO, basket: Basket) -> None:
+    async def save_product_on_basket(self, product: AddProductOnBasketDTO, basket: Basket) -> None:
         product_model = ProductOnBasketModel.create_from_dto(product, basket)
         self._session.add(product_model)
         try:

@@ -4,7 +4,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.base.model import Base
-from src.core.basket.dto.product_on_basket import AddProductDTO
+from src.core.basket.dto.product_on_basket import AddProductOnBasketDTO
 from src.core.basket.entities.basket import Basket
 from src.core.basket.entities.product_on_basket import ProductOnBasket
 from src.core.basket.models.basket import BasketModel
@@ -21,7 +21,7 @@ class ProductOnBasketModel(Base):
     product: Mapped["ProductModel"] = relationship()
 
     @classmethod
-    def create_from_dto(cls, product: AddProductDTO, basket: Basket) -> 'ProductOnBasketModel':
+    def create_from_dto(cls, product: AddProductOnBasketDTO, basket: Basket) -> 'ProductOnBasketModel':
         return cls(
             product_id=product.product_id,
             basket_id=basket.basket_id,
