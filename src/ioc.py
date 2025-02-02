@@ -10,7 +10,7 @@ from src.core.basket.repositories.basket import BasketRepository
 from src.core.basket.services.basket import BasketService
 
 
-class AppProvider(Provider):
+class SQLAlchemyProvider(Provider):
     config = from_context(provides=Config, scope=Scope.APP)
 
     @provide(scope=Scope.APP)
@@ -26,6 +26,8 @@ class AppProvider(Provider):
         async with session_maker() as session:
             yield session
 
+
+class AppProvider(Provider):
     basket_repository = provide(BasketRepository, scope=Scope.REQUEST, provides=IBasketRepository)
     basket_service = provide(BasketService, scope=Scope.REQUEST)
     basket_service_adapter = provide(BasketServiceAdapter, scope=Scope.REQUEST)
