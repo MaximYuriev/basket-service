@@ -3,7 +3,7 @@ import uuid
 from src.core.basket.dto.product_on_basket import UpdateProductDTO, AddProductDTO
 from src.core.basket.entities.basket import Basket
 from src.core.basket.entities.product_on_basket import ProductOnBasket
-from src.core.basket.exceptions.product_on_basket import ProductNotFoundException, ProductAlreadyInBasketException
+from src.core.basket.exceptions.product_on_basket import ProductOnBasketNotFoundException, ProductAlreadyInBasketException
 from src.core.basket.interfaces.repositories.basket import IBasketRepository
 
 
@@ -39,7 +39,7 @@ class BasketService:
     async def _validate_added_product(self, product: AddProductDTO, basket: Basket) -> None:
         try:
             await self._get_product_from_basket(basket, product.product_id)
-        except ProductNotFoundException:
+        except ProductOnBasketNotFoundException:
             pass
         else:
             raise ProductAlreadyInBasketException

@@ -10,7 +10,7 @@ from src.api.basket.response import BasketResponse
 from src.api.basket.schemas.basket import CreateBasketSchema
 from src.api.basket.schemas.product import AddProductSchema, UpdateProductSchema
 from src.core.basket.exceptions.basket import BasketAlreadyExistException, BasketNotFoundException
-from src.core.basket.exceptions.product_on_basket import ProductNotFoundException, ProductAlreadyInBasketException
+from src.core.basket.exceptions.product_on_basket import ProductOnBasketNotFoundException, ProductAlreadyInBasketException
 
 basket_router = APIRouter(prefix="/basket", tags=["Basket"])
 
@@ -40,7 +40,7 @@ async def add_product_on_basket(
         await basket_service_adapter.add_product_on_basket(basket_id, create_product_schema)
     except BasketNotFoundException as exc:
         raise HTTPBasketNotFoundException(exc.message)
-    except ProductNotFoundException as exc:
+    except ProductOnBasketNotFoundException as exc:
         raise HTTPProductNotFoundException(exc.message)
     except ProductAlreadyInBasketException as exc:
         raise HTTPProductAlreadyInBasketException(exc.message)
@@ -72,7 +72,7 @@ async def update_product_on_basket(
 ) -> BasketResponse:
     try:
         await basket_service_adapter.update_product_on_basket(basket_id, product_id, update_product_schema)
-    except ProductNotFoundException as exc:
+    except ProductOnBasketNotFoundException as exc:
         HTTPProductNotFoundException(exc.message)
     except BasketNotFoundException as exc:
         HTTPBasketNotFoundException(exc.message)
@@ -91,7 +91,7 @@ async def remove_product_from_basket(
         await basket_service_adapter.remove_product_from_basket(basket_id, product_id)
     except BasketNotFoundException as exc:
         raise HTTPBasketNotFoundException(exc.message)
-    except ProductNotFoundException as exc:
+    except ProductOnBasketNotFoundException as exc:
         raise HTTPProductNotFoundException(exc.message)
     else:
         return BasketResponse(detail="Товар успешно удален!")

@@ -9,7 +9,7 @@ from src.core.basket.dto.product_on_basket import AddProductDTO
 from src.core.basket.entities.basket import Basket
 from src.core.basket.entities.product_on_basket import ProductOnBasket
 from src.core.basket.exceptions.basket import BasketNotFoundException, BasketAlreadyExistException
-from src.core.basket.exceptions.product_on_basket import ProductNotFoundException
+from src.core.basket.exceptions.product_on_basket import ProductOnBasketNotFoundException
 from src.core.basket.interfaces.repositories.basket import IBasketRepository
 from src.core.basket.models.basket import BasketModel
 from src.core.basket.models.product_on_basket import ProductOnBasketModel
@@ -37,7 +37,7 @@ class BasketRepository(IBasketRepository):
         try:
             await self._session.commit()
         except IntegrityError:
-            raise ProductNotFoundException
+            raise ProductOnBasketNotFoundException
 
     async def delete_product_from_basket(self, product_id: int, basket: Basket) -> None:
         product_model = await self._get_product_on_basket_model(
@@ -87,4 +87,4 @@ class BasketRepository(IBasketRepository):
         product_model = await self._session.scalar(query)
         if product_model is not None:
             return product_model
-        raise ProductNotFoundException
+        raise ProductOnBasketNotFoundException
