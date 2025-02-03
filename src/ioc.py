@@ -9,7 +9,7 @@ from src.config import Config
 from src.core.basket.interfaces.repositories.basket import IBasketRepository
 from src.core.basket.repositories.basket import BasketRepository
 from src.core.basket.services.basket import BasketService
-from src.core.product.broker.product.adapter import FromBrokerToProductServiceAdapter
+from src.broker.product.adapter import FromBrokerToProductServiceAdapter
 from src.core.product.interfaces.repositories.product import IProductRepository
 from src.core.product.repositories.product import ProductRepository
 from src.core.product.services.product import ProductService
@@ -30,15 +30,6 @@ class SQLAlchemyProvider(Provider):
     async def get_session(self, session_maker: async_sessionmaker[AsyncSession]) -> AsyncIterable[AsyncSession]:
         async with session_maker() as session:
             yield session
-
-
-class RMQProvider(Provider):
-    config = from_context(provides=Config, scope=Scope.APP)
-
-    @provide(scope=Scope.REQUEST)
-    async def get_broker_connection(self, config: Config) -> AsyncIterable[RabbitBroker]:
-        async with RabbitBroker(config.rabbitmq.rmq_url) as broker:
-            yield broker
 
 
 class BasketProvider(Provider):

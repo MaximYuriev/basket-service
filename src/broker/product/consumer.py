@@ -1,8 +1,8 @@
 from dishka.integrations.faststream import inject, FromDishka
 from faststream.rabbit import RabbitRouter
 
-from src.core.product.broker.product.adapter import FromBrokerToProductServiceAdapter
-from src.core.product.broker.product.schemas import UpdateProductBrokerSchema, CreateProductBrokerSchema, \
+from src.broker.product.adapter import FromBrokerToProductServiceAdapter
+from src.broker.product.schemas import UpdateProductBrokerSchema, CreateProductBrokerSchema, \
     DeleteProductBrokerSchema
 from src.core.product.exceptions.product import ProductNotFoundException
 

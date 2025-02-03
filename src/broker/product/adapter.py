@@ -1,4 +1,4 @@
-from src.core.product.broker.product.schemas import CreateProductBrokerSchema, DeleteProductBrokerSchema, \
+from src.broker.product.schemas import CreateProductBrokerSchema, DeleteProductBrokerSchema, \
     UpdateProductBrokerSchema
 from src.core.product.dto.product import UpdateProductDTO
 from src.core.product.entities.product import Product
