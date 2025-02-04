@@ -1,10 +1,10 @@
 from typing import AsyncIterable
 
 from dishka import Provider, from_context, Scope, provide
-from faststream.rabbit import RabbitBroker
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine, async_sessionmaker, AsyncSession
 
 from src.api.basket.adapter import BasketServiceAdapter
+from src.broker.basket.adapter import FromBrokerToBasketServiceAdapter
 from src.config import Config
 from src.core.basket.interfaces.repositories.basket import IBasketRepository
 from src.core.basket.repositories.basket import BasketRepository
@@ -38,6 +38,7 @@ class BasketProvider(Provider):
     basket_repository = provide(BasketRepository, provides=IBasketRepository)
     basket_service = provide(BasketService)
     basket_service_adapter = provide(BasketServiceAdapter)
+    basket_service_for_broker_adapter = provide(FromBrokerToBasketServiceAdapter)
 
 
 class ProductProvider(Provider):
