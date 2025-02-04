@@ -13,6 +13,7 @@ from src.core.basket.exceptions.product_on_basket import ProductOnBasketNotFound
 from src.core.basket.interfaces.repositories.basket import IBasketRepository
 from src.core.basket.models.basket import BasketModel
 from src.core.basket.models.product_on_basket import ProductOnBasketModel
+from src.core.product.exceptions.product import ProductNotFoundException
 
 
 class BasketRepository(IBasketRepository):
@@ -37,7 +38,7 @@ class BasketRepository(IBasketRepository):
         try:
             await self._session.commit()
         except IntegrityError:
-            raise ProductOnBasketNotFoundException
+            raise ProductNotFoundException
 
     async def delete_product_from_basket(self, product_id: int, basket: Basket) -> None:
         product_model = await self._get_product_on_basket_model(
