@@ -7,14 +7,7 @@ from src.broker.basket.consumer import basket_router
 from src.config import Config
 from src.broker.product.consumer import product_router
 from src.ioc import ProductProvider, SQLAlchemyProvider, BasketProvider
-from src.main import config
-
-container = make_async_container(
-    BasketProvider(),
-    ProductProvider(),
-    SQLAlchemyProvider(),
-    context={Config: config},
-)
+from src.main import config, container
 
 broker = RabbitBroker(url=config.rmq.rmq_url)
 app = FastStream(broker)
