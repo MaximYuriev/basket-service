@@ -38,7 +38,7 @@ class BasketRepository(IBasketRepository):
         try:
             await self._session.commit()
         except IntegrityError:
-            raise ProductNotFoundException
+            raise ProductNotFoundException(product_id=product.product_id)
 
     async def delete_product_from_basket(self, product_id: int, basket: Basket) -> None:
         product_model = await self._get_product_on_basket_model(
