@@ -51,7 +51,7 @@ async def get_basket(
         return BasketResponse(detail="Корзина успешно найдена!", data=basket)
 
 
-@basket_router.patch("")
+@basket_router.patch("/{product_id}")
 @inject
 async def update_product_on_basket(
         basket_id: Annotated[uuid.UUID, Depends(get_user_id_from_token)],
@@ -69,7 +69,7 @@ async def update_product_on_basket(
         return BasketResponse(detail="Товар успешно изменен!")
 
 
-@basket_router.delete("")
+@basket_router.delete("/{product_id}")
 @inject
 async def remove_product_from_basket(
         basket_id: Annotated[uuid.UUID, Depends(get_user_id_from_token)],
