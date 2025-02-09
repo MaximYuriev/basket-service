@@ -18,7 +18,7 @@ from src.core.product.exceptions.product import ProductNotFoundException
 basket_router = APIRouter(prefix="/basket", tags=["Basket"])
 
 
-@basket_router.post("/{basket_id}")
+@basket_router.post("")
 @inject
 async def add_product_on_basket(
         basket_id: Annotated[uuid.UUID, Depends(get_user_id_from_token)],
@@ -37,7 +37,7 @@ async def add_product_on_basket(
         return BasketResponse(detail="Товар успешно добавлен!")
 
 
-@basket_router.get("/{basket_id}")
+@basket_router.get("")
 @inject
 async def get_basket(
         basket_id: Annotated[uuid.UUID, Depends(get_user_id_from_token)],
@@ -51,7 +51,7 @@ async def get_basket(
         return BasketResponse(detail="Корзина успешно найдена!", data=basket)
 
 
-@basket_router.patch("/{basket_id}")
+@basket_router.patch("")
 @inject
 async def update_product_on_basket(
         basket_id: Annotated[uuid.UUID, Depends(get_user_id_from_token)],
@@ -69,7 +69,7 @@ async def update_product_on_basket(
         return BasketResponse(detail="Товар успешно изменен!")
 
 
-@basket_router.delete("/{basket_id}")
+@basket_router.delete("")
 @inject
 async def remove_product_from_basket(
         basket_id: Annotated[uuid.UUID, Depends(get_user_id_from_token)],
