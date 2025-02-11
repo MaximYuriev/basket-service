@@ -5,11 +5,11 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine, async_sessi
 
 from src.api.basket.adapter import BasketServiceAdapter
 from src.broker.basket.adapter import FromBrokerToBasketServiceAdapter
+from src.broker.product.adapter import FromBrokerToProductServiceAdapter
 from src.config import Config
 from src.core.basket.interfaces.repositories.basket import IBasketRepository
 from src.core.basket.repositories.basket import BasketRepository
 from src.core.basket.services.basket import BasketService
-from src.broker.product.adapter import FromBrokerToProductServiceAdapter
 from src.core.product.interfaces.repositories.product import IProductRepository
 from src.core.product.repositories.product import ProductRepository
 from src.core.product.services.product import ProductService

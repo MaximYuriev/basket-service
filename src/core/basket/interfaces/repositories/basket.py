@@ -1,7 +1,7 @@
 import uuid
 from abc import ABC, abstractmethod
 
-from src.core.basket.dto.product_on_basket import AddProductOnBasketDTO
+from src.core.basket.dto.product_on_basket import AddProductOnBasketDTO, ProductOnBasketFilter
 from src.core.basket.entities.basket import Basket
 from src.core.basket.entities.product_on_basket import ProductOnBasket
 
@@ -11,7 +11,7 @@ class IBasketRepository(ABC):
     async def add_basket_on_db(self, basket: Basket) -> None: ...
 
     @abstractmethod
-    async def get_basket_by_id(self, basket_id: uuid.UUID) -> Basket: ...
+    async def get_basket_by_id(self, basket_id: uuid.UUID, filters: ProductOnBasketFilter | None = None) -> Basket: ...
 
     @abstractmethod
     async def save_product_on_basket(self, product: AddProductOnBasketDTO, basket: Basket) -> None: ...

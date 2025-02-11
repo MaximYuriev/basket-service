@@ -13,3 +13,8 @@ class UpdateProductOnBasketDTO:
     product_id: int
     quantity_on_basket: int | None = None
     marked_for_order: bool | None = None
+
+
+@dataclass
+class ProductOnBasketFilter:
+    marked_for_order: bool | None = None

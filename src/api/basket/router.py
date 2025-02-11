@@ -2,12 +2,13 @@ import uuid
 from typing import Annotated
 
 from dishka.integrations.fastapi import inject, FromDishka
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 
 from authorizer.http.dependencies import get_user_id_from_token
 from src.api.basket.adapter import BasketServiceAdapter
 from src.api.basket.exceptions.basket import HTTPBasketNotFoundException
 from src.api.basket.exceptions.product import HTTPProductNotFoundException, HTTPProductAlreadyInBasketException
+from src.api.basket.filters import ProductOnBasketFilterSchema
 from src.api.basket.response import BasketResponse
 from src.api.basket.schemas.product import AddProductSchema, UpdateProductSchema
 from src.core.basket.exceptions.basket import BasketNotFoundException
@@ -41,10 +42,11 @@ async def add_product_on_basket(
 @inject
 async def get_basket(
         basket_id: Annotated[uuid.UUID, Depends(get_user_id_from_token)],
+        filters: Annotated[ProductOnBasketFilterSchema, Query()],
         basket_service_adapter: FromDishka[BasketServiceAdapter],
 ) -> BasketResponse:
     try:
-        basket = await basket_service_adapter.get_basket(basket_id)
+        basket = await basket_service_adapter.get_basket(basket_id, filters)
     except BasketNotFoundException as exc:
         raise HTTPBasketNotFoundException(exc.message)
     else:

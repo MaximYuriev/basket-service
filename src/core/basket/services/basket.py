@@ -1,9 +1,10 @@
 import uuid
 
-from src.core.basket.dto.product_on_basket import UpdateProductOnBasketDTO, AddProductOnBasketDTO
+from src.core.basket.dto.product_on_basket import UpdateProductOnBasketDTO, AddProductOnBasketDTO, ProductOnBasketFilter
 from src.core.basket.entities.basket import Basket
 from src.core.basket.entities.product_on_basket import ProductOnBasket
-from src.core.basket.exceptions.product_on_basket import ProductOnBasketNotFoundException, ProductAlreadyInBasketException
+from src.core.basket.exceptions.product_on_basket import ProductOnBasketNotFoundException, \
+    ProductAlreadyInBasketException
 from src.core.basket.interfaces.repositories.basket import IBasketRepository
 
 
@@ -15,8 +16,10 @@ class BasketService:
         basket = Basket(basket_id)
         await self._repository.add_basket_on_db(basket)
 
-    async def get_basket(self, basket_id: uuid.UUID) -> Basket:
-        return await self._repository.get_basket_by_id(basket_id)
+    async def get_basket(self, basket_id: uuid.UUID, filters: ProductOnBasketFilter | None = None) -> Basket:
+        if filters is None:
+            return await self._repository.get_basket_by_id(basket_id)
+        return await self._repository.get_basket_by_id(basket_id, filters)
 
     async def add_product_on_basket(self, product: AddProductOnBasketDTO, basket_id: uuid.UUID) -> None:
         basket = await self.get_basket(basket_id)

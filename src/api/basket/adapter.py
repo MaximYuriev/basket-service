@@ -1,8 +1,9 @@
 import uuid
 
+from src.api.basket.filters import ProductOnBasketFilterSchema
 from src.api.basket.schemas.basket import CreateBasketSchema, BasketSchema
 from src.api.basket.schemas.product import AddProductSchema, UpdateProductSchema
-from src.core.basket.dto.product_on_basket import UpdateProductOnBasketDTO, AddProductOnBasketDTO
+from src.core.basket.dto.product_on_basket import UpdateProductOnBasketDTO, AddProductOnBasketDTO, ProductOnBasketFilter
 from src.core.basket.services.basket import BasketService
 
 
@@ -19,8 +20,12 @@ class BasketServiceAdapter:
     async def get_basket(
             self,
             basket_id: uuid.UUID,
+            filters: ProductOnBasketFilterSchema,
     ) -> BasketSchema:
-        basket = await self._service.get_basket(basket_id)
+        product_on_basket_filter = None
+        if filters.with_products_marked_for_order is not None:
+            product_on_basket_filter = ProductOnBasketFilter(**filters.model_dump(by_alias=True))
+        basket = await self._service.get_basket(basket_id, product_on_basket_filter)
         return BasketSchema.model_validate(basket, from_attributes=True)
 
     async def add_product_on_basket(

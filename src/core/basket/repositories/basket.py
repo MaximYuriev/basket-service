@@ -1,11 +1,11 @@
 import uuid
 
-from sqlalchemy import select
+from sqlalchemy import select, Select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload, joinedload
+from sqlalchemy.orm import selectinload, joinedload, with_loader_criteria
 
-from src.core.basket.dto.product_on_basket import AddProductOnBasketDTO
+from src.core.basket.dto.product_on_basket import AddProductOnBasketDTO, ProductOnBasketFilter
 from src.core.basket.entities.basket import Basket
 from src.core.basket.entities.product_on_basket import ProductOnBasket
 from src.core.basket.exceptions.basket import BasketNotFoundException, BasketAlreadyExistException
@@ -28,8 +28,12 @@ class BasketRepository(IBasketRepository):
         except IntegrityError:
             raise BasketAlreadyExistException
 
-    async def get_basket_by_id(self, basket_id: uuid.UUID) -> Basket:
-        basket_model = await self._get_basket_model(basket_id=basket_id)
+    async def get_basket_by_id(self, basket_id: uuid.UUID, filters: ProductOnBasketFilter | None = None) -> Basket:
+        if filters is None:
+            basket_model = await self._get_basket_model(basket_id=basket_id)
+        else:
+            basket_model = await self._get_basket_model_with_product_filter(marked_for_order=filters.marked_for_order,
+                                                                            basket_id=basket_id)
         return basket_model.convert_to_entity()
 
     async def save_product_on_basket(self, product: AddProductOnBasketDTO, basket: Basket) -> None:
@@ -65,6 +69,12 @@ class BasketRepository(IBasketRepository):
                 setattr(product_model, key, value)
         await self._session.commit()
 
+    async def _get_basket_model_by_query(self, query: Select[tuple[BasketModel]]) -> BasketModel:
+        basket_model = await self._session.scalar(query)
+        if basket_model is not None:
+            return basket_model
+        raise BasketNotFoundException
+
     async def _get_basket_model(self, **kwargs) -> BasketModel:
         query = (
             select(BasketModel)
@@ -74,10 +84,22 @@ class BasketRepository(IBasketRepository):
             )
             .filter_by(**kwargs)
         )
-        basket_model = await self._session.scalar(query)
-        if basket_model is not None:
-            return basket_model
-        raise BasketNotFoundException
+        return await self._get_basket_model_by_query(query)
+
+    async def _get_basket_model_with_product_filter(self, marked_for_order: bool, **kwargs) -> BasketModel:
+        query = (
+            select(BasketModel)
+            .options(
+                selectinload(BasketModel.products)
+                .joinedload(ProductOnBasketModel.product),
+                with_loader_criteria(
+                    ProductOnBasketModel,
+                    ProductOnBasketModel.marked_for_order == marked_for_order,
+                )
+            )
+            .filter_by(**kwargs)
+        )
+        return await self._get_basket_model_by_query(query)
 
     async def _get_product_on_basket_model(self, **kwargs) -> ProductOnBasketModel:
         query = (
