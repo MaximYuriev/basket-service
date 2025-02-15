@@ -4,12 +4,14 @@ from fastapi import FastAPI
 
 from src.api.basket.router import basket_router
 from src.config import Config
-from src.ioc import BasketProvider, SQLAlchemyProvider, ProductProvider
+from src.ioc import BasketProvider, SQLAlchemyProvider, ProductProvider, OrderProvider, RMQProvider
 
 config = Config()
 container = make_async_container(
     BasketProvider(),
     ProductProvider(),
+    OrderProvider(),
+    RMQProvider(),
     SQLAlchemyProvider(),
     context={Config: config},
 )

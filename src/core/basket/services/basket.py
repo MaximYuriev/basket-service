@@ -3,13 +3,16 @@ import uuid
 from src.core.basket.dto.product_on_basket import UpdateProductOnBasketDTO, AddProductOnBasketDTO, ProductOnBasketFilter
 from src.core.basket.entities.basket import Basket
 from src.core.basket.entities.product_on_basket import ProductOnBasket
+from src.core.basket.exceptions.basket import BasketNotFoundException
 from src.core.basket.exceptions.product_on_basket import ProductOnBasketNotFoundException, \
     ProductAlreadyInBasketException
+from src.core.basket.interfaces.publishers.basket import IBasketPublisher
 from src.core.basket.interfaces.repositories.basket import IBasketRepository
 
 
 class BasketService:
-    def __init__(self, repository: IBasketRepository):
+    def __init__(self, repository: IBasketRepository, publisher: IBasketPublisher):
+        self._publisher = publisher
         self._repository = repository
 
     async def create_basket(self, basket_id: uuid.UUID) -> None:
@@ -38,6 +41,18 @@ class BasketService:
             if value is not None:
                 setattr(product_on_basket, key, value)
         await self._repository.update_product_on_basket(product_on_basket, basket)
+
+    async def pay_for_products_in_basket(self, basket_id: uuid.UUID, order_id: uuid.UUID) -> None:
+        filters = ProductOnBasketFilter(marked_for_order=True)
+        try:
+            basket = await self._repository.get_basket_by_id(basket_id, filters=filters)
+        except BasketNotFoundException:
+            await self._publisher.cancel_order(order_id, reason="Корзина не найдена!")
+        else:
+            if basket.products_on_basket:
+                await self._publisher.purchase_products(basket, order_id)
+            else:
+                await self._publisher.cancel_order(order_id, reason="В корзине нет товаров!")
 
     async def _validate_added_product(self, product: AddProductOnBasketDTO, basket: Basket) -> None:
         try:
