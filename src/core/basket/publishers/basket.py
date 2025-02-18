@@ -2,7 +2,6 @@ import uuid
 
 from aio_pika import RobustExchange, RobustQueue
 from faststream.rabbit import RabbitBroker, RabbitExchange, RabbitQueue
-from watchfiles import awatch
 
 from src.core.base.schemas import BrokerPublishedMessage
 from src.core.basket.entities.basket import Basket
